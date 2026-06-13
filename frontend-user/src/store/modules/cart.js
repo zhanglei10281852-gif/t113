@@ -17,10 +17,14 @@ export default {
       state.items.reduce((sum, item) => sum + item.quantity, 0),
     checkedItems: (state) => state.items.filter((item) => item.checked),
     checkedTotal: (_, getters) => {
-      return getters.checkedItems.reduce((sum, item) => sum + item.price, 0);
+      return getters.checkedItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0,
+      );
     },
     checkedCount: (_, getters) => getters.checkedItems.length,
-    isAllChecked: (state) => state.items.every((item) => item.checked),
+    isAllChecked: (state) =>
+      state.items.length > 0 && state.items.every((item) => item.checked),
   },
   mutations: {
     SET_ITEMS(state, items) {
@@ -56,7 +60,7 @@ export default {
       await dispatch("fetchCart");
     },
     async toggleCheckAll({ dispatch, getters }) {
-      await checkAll(getters.isAllChecked);
+      await checkAll(!getters.isAllChecked);
       await dispatch("fetchCart");
     },
   },

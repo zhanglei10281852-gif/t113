@@ -117,7 +117,7 @@ Mock.mock(/\/api\/orders(\?.*)?$/, "get", (options) => {
   const url = new URL("http://localhost" + options.url);
   const status = url.searchParams.get("status");
   let list = [...orders];
-  if (status !== null && status !== "") {
+  if (status !== null && status !== "" && parseInt(status) !== -1) {
     list = list.filter((o) => o.status === parseInt(status));
   }
   return { code: 200, message: "success", data: list };
@@ -140,8 +140,9 @@ Mock.mock(/\/api\/orders\/\d+\/pay/, "put", (options) => {
   const id = parseInt(options.url.match(/\/api\/orders\/(\d+)/)[1]);
   const order = orders.find((o) => o.id === id);
   if (order && order.status === 0) {
-    order.status = 2;
-    order.statusText = statusMap[2];
+    order.status = 1;
+    order.statusText = statusMap[1];
+    order.payTime = new Date().toLocaleString("zh-CN");
     return { code: 200, message: "支付成功", data: null };
   }
   return { code: 400, message: "支付失败", data: null };

@@ -393,6 +393,9 @@ Mock.mock(/\/api\/products(\?.*)?$/, "get", (options) => {
   const pageSize = parseInt(url.searchParams.get("pageSize")) || 10;
 
   let filtered = [...allProducts];
+  if (categoryId) {
+    filtered = filtered.filter((p) => p.categoryId === parseInt(categoryId));
+  }
   if (keyword) {
     filtered = filtered.filter(
       (p) => p.name.includes(keyword) || p.category.includes(keyword),

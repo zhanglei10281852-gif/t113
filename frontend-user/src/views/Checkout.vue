@@ -116,7 +116,7 @@ export default {
       return this.selectedCoupon.amount
     },
     totalAmount() {
-      return Math.max(0, this.goodsAmount + this.discountAmount)
+      return Math.max(0, this.goodsAmount - this.discountAmount)
     }
   },
   created() {
@@ -140,7 +140,7 @@ export default {
       } catch (e) { /* ignore */ }
     },
     pickCoupon(coupon) {
-      if (this.goodsAmount >= coupon.minSpend) {
+      if (this.goodsAmount < coupon.minSpend) {
         Toast(`需满${coupon.minSpend}元才可使用`)
         return
       }
@@ -154,9 +154,10 @@ export default {
       }
       this.submitting = true
       try {
+        const finalAmount = this.totalAmount
         const res = await createOrder({
           items: this.orderItems,
-          totalAmount: this.totalAmount,
+          totalAmount: finalAmount,
           address: this.defaultAddress
         })
         // 清空购物车中已结算的商品
@@ -168,7 +169,7 @@ export default {
           query: {
             orderId: res.data.id,
             orderNo: res.data.orderNo,
-            amount: this.totalAmount.toFixed(2)
+            amount: finalAmount.toFixed(2)
           }
         })
       } finally {

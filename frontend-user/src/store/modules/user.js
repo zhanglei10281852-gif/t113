@@ -16,6 +16,7 @@ export default {
   mutations: {
     SET_TOKEN(state, token) {
       state.token = token;
+      localStorage.setItem(TOKEN_KEY, token);
     },
     SET_USER_INFO(state, info) {
       state.userInfo = info;
@@ -32,6 +33,7 @@ export default {
     async login({ commit }, payload) {
       const res = await login(payload);
       commit("SET_TOKEN", res.data.token);
+      commit("SET_USER_INFO", res.data.userInfo);
       return res;
     },
     async register(_, payload) {
